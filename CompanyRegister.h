@@ -7,6 +7,7 @@ class CompanyRegister{
 public:
 
     CompanyRegister(const CompanyRegister&) = delete;
+    ~CompanyRegister();
 
     void addCompany(Company* company);
     void delCompany(int index);

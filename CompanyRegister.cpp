@@ -2,6 +2,14 @@
 
 CompanyRegister::CompanyRegister(){}
 
+CompanyRegister::~CompanyRegister()
+{
+    while(!_companies.empty())
+    {
+        delete _companies.takeFirst();
+    }
+}
+
 void CompanyRegister::addCompany(Company* company)
 {
     _companies.push_back(company);

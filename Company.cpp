@@ -6,6 +6,9 @@ Company::Company():
     _employeesCount(0)
 {}
 
+Company::~Company()
+{}
+
 QString Company::getName()
 {
     return _name;
@@ -24,6 +27,23 @@ QList<QString> Company::getOwners()
 void Company::setOwners(const QList<QString> &owners)
 {
     _owners = owners;
+}
+
+bool Company::addOwner(const QString &owner)
+{
+    if(_owners.count(owner) == 0)
+    {
+        _owners.append(owner);
+        return true;
+    }
+
+    return false;
+}
+
+
+bool Company::delOwner(const QString &owner)
+{
+    return _owners.removeOne(owner);
 }
 
 double Company::getIncome()
