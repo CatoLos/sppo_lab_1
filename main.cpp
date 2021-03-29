@@ -4,12 +4,101 @@
 #include "ResearchCompany.h"
 #include "BuildingCompany.h"
 
+QTextStream cout(stdout);
+QTextStream cin(stdin);
+CompanyRegister& reg = CompanyRegister::getReg();
+
+void printCompaniesByType(Company::Type compType)
+{
+    if(compType >= Company::TRANSPORT && compType < Company::RESEARCH_AND_PRODUCTION)
+    {
+        cout << endl << "Companies:" << endl;
+        for(int i = 0; i < reg.getSize(); ++i)
+        {
+            Company* comp = reg.getCompany(i);
+
+            if(comp->getType() == compType)
+            {
+                cout << comp->getName() << endl;
+            }
+        }
+    }
+    else
+        cout << "Wrong type!" << endl;
+}
+
+void printCompaniesByOwner(const QString& owner)
+{
+    cout << endl << "Companies:" << endl;
+
+    int count = 0;
+
+    for(int i = 0; i < reg.getSize(); ++i)
+    {
+        Company* comp = reg.getCompany(i);
+
+        if(comp->getOwners().contains(owner))
+        {
+            ++count;
+            cout << comp->getName() << endl;
+        }
+    }
+
+    if(count == 0)
+        cout << "Empty" << endl;
+}
+
+void printCompaniesStatistics()
+{
+    for(int type = Company::TRANSPORT; type <= Company::RESEARCH_AND_PRODUCTION; ++type)
+    {
+        switch (type) {
+        case Company::TRANSPORT:
+            cout << "TRANSPORT statistics:" << endl;
+            break;
+        case Company::BUILDING:
+            cout << "BUILDING statistics:" << endl;
+            break;
+        case Company::COMMERCIAL:
+            cout << "COMMERCIAL statistics:" << endl;
+            break;
+        case Company::RESEARCH_AND_PRODUCTION:
+            cout << "RESEARCH_AND_PRODUCTION statistics:" << endl;
+            break;
+        }
+
+        cout << endl;
+
+        int     totalCount       = 0.0;
+        double  totalIncome   = 0.0;
+        double  totalArea     = 0.0;
+        double  totalEmpCount = 0.0;
+
+        for(int i = 0; i < reg.getSize(); ++i)
+        {
+            Company* comp = reg.getCompany(i);
+
+            if(comp->getType() == type)
+            {
+                ++totalCount;
+                totalIncome += comp->getIncome();
+                totalArea += comp->getArea();
+                totalEmpCount += comp->getEmployeesCount();
+            }
+        }
+
+        if(totalCount != 0){
+            cout << "Average income: " << totalIncome / totalCount << endl;
+            cout << "Average area: " << totalArea / totalCount << endl;
+            cout << "Average employees count: " << totalEmpCount / totalCount << endl << endl;
+        }
+        else
+            cout << "No companies of that type!" << endl << endl;
+    }
+}
+
 int main(int argc, char *argv[])
 {
-    QTextStream cout(stdout);
-    QTextStream cin(stdin);
-
-    CompanyRegister& reg = CompanyRegister::getReg();
 
     TransportCompany* tr1 = new TransportCompany();
 
@@ -71,6 +160,7 @@ int main(int argc, char *argv[])
 
     reg.addCompany(bl2);
 
+
     int compType = -1;
 
     cout << "Enter companys' type to print: " << endl
@@ -81,91 +171,16 @@ int main(int argc, char *argv[])
 
     cin >> compType;
 
-    if(compType >= Company::TRANSPORT && compType < Company::RESEARCH_AND_PRODUCTION)
-    {
-        cout << endl << "Companies:" << endl;
-        for(int i = 0; i < reg.getSize(); ++i)
-        {
-            Company* comp = reg.getCompany(i);
-
-            if(comp->getType() == compType)
-            {
-                cout << comp->getName() << endl;
-            }
-        }
-    }
-    else
-        cout << "Wrong type!" << endl;
+    printCompaniesByType(Company::Type(compType));
 
     QString owner;
 
     cout << endl << "Enter the owner whose companies to print:" << endl;
     cin >> owner;
-    cout << endl << "Companies:" << endl;
-    int count = 0;
-
-
-    for(int i = 0; i < reg.getSize(); ++i)
-    {
-        Company* comp = reg.getCompany(i);
-
-        if(comp->getOwners().contains(owner))
-        {
-            ++count;
-            cout << comp->getName() << endl;
-        }
-    }
-
-    if(count == 0)
-        cout << "Empty" << endl;
+    printCompaniesByOwner(owner);
 
     cout << endl;
-
-    for(int type = Company::TRANSPORT; type <= Company::RESEARCH_AND_PRODUCTION; ++type)
-    {
-        switch (type) {
-        case Company::TRANSPORT:
-            cout << "TRANSPORT statistics:" << endl;
-            break;
-        case Company::BUILDING:
-            cout << "BUILDING statistics:" << endl;
-            break;
-        case Company::COMMERCIAL:
-            cout << "COMMERCIAL statistics:" << endl;
-            break;
-        case Company::RESEARCH_AND_PRODUCTION:
-            cout << "RESEARCH_AND_PRODUCTION statistics:" << endl;
-            break;
-        }
-
-        cout << endl;
-
-        int     totalCount       = 0.0;
-        double  totalIncome   = 0.0;
-        double  totalArea     = 0.0;
-        double  totalEmpCount = 0.0;
-
-        for(int i = 0; i < reg.getSize(); ++i)
-        {
-            Company* comp = reg.getCompany(i);
-
-            if(comp->getType() == type)
-            {
-                ++totalCount;
-                totalIncome += comp->getIncome();
-                totalArea += comp->getArea();
-                totalEmpCount += comp->getEmployeesCount();
-            }
-        }
-
-        if(totalCount != 0){
-            cout << "Average income: " << totalIncome / totalCount << endl;
-            cout << "Average area: " << totalArea / totalCount << endl;
-            cout << "Average employees count: " << totalEmpCount / totalCount << endl << endl;
-        }
-        else
-            cout << "No companies of that type!" << endl << endl;
-    }
+    printCompaniesStatistics();
 
     return 0;
 }
